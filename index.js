@@ -1,37 +1,37 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-
+const nodemailer = require('nodemailer');
+require('dotenv').config();
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-app.get('/info', (req, res) => {
-   console.log("This is Shakil Ahmed");
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL,
+        pass: process.env.PASS
+    }
+})
+
+app.post('/getGmail', (req, res) => {
+    const info = req.body;
+    const mailOptions = {
+        from: `shakilatrai6@gmail.com`,
+        to: 'shakilatrai5@gmail.com',
+        subject: `${info.subject}`,
+        text: `${info.message}\n${info.name}\n${info.email}`
+    }
+    transporter.sendMail(mailOptions, function (err, data) {
+        if (err) {
+            console.log('Error Occurs');
+        } else {
+            console.log('Message Sent!!!');
+        }
+    })
 });
-
-
-
-app.post('/patient', (req, res) => {
-    const product = req.body;
-    client = new MongoClient(uri, { useNewUrlParser: true });
-    client.connect(err => {
-        const collection = client.db("doctorsPortal").collection("patient");
-        collection.insertOne(product, (err, result) => {
-            if (err) {
-                console.log(err)
-                res.status(500).send({ message: err });
-            }
-            else {
-                res.send(result.ops[0]);
-            }
-        });
-        client.close();
-    });
-});
-
-
 
 const port = process.env.PORT || 4200;
 app.listen(port, () => console.log('Listenting to port ', port));
