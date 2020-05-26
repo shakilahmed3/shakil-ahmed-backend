@@ -10,6 +10,8 @@ app.use(bodyParser.json());
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
+    secure:false,
+    port:25,
     auth: {
         user: process.env.EMAIL,
         pass: process.env.PASS
@@ -26,9 +28,9 @@ app.post('/getGmail', (req, res) => {
     }
     transporter.sendMail(mailOptions, function (err, data) {
         if (err) {
-            console.log('Error Occurs');
+            res.send("Error");
         } else {
-            console.log('Message Sent!!!');
+            res.send('Message Sent!!!');
         }
     })
 });
